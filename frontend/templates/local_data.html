@@ -1,0 +1,260 @@
+
+{% extends "base.html" %}
+
+{% block title %}Local Data | CICADA AIOps{% endblock %}
+
+{% block content %}
+
+<style>
+.local-container {
+    max-width: 1350px;
+    margin: auto;
+    padding: 30px 20px;
+}
+.local-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+.local-header h1 { margin-bottom: 8px; }
+.local-panel {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    overflow-x: auto;
+}
+.local-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+.local-controls input,
+.local-controls select {
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+}
+.local-controls button {
+    padding: 10px 18px;
+    background: #1f3a5f;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+}
+.local-panel table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 750px;
+}
+.local-panel th,
+.local-panel td {
+    padding: 13px;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: left;
+    font-size: 13px;
+}
+.local-panel th { color: #64748b; }
+.local-info {
+    color: #64748b;
+    margin-bottom: 15px;
+}
+</style>
+
+<div class="local-container">
+
+    <header class="local-header">
+        <div>
+            <p class="eyebrow">CICADA AIOPS / DATA CENTER</p>
+            <h1>Local Telemetry Data</h1>
+            <p>View approved operational telemetry stored in MySQL.</p>
+        </div>
+
+        <button onclick="loadLocalData()">
+            Refresh Data
+        </button>
+    </header>
+
+    <section class="local-panel">
+
+        <div class="local-controls">
+
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Search hostname, metric or source..."
+                oninput="filterData()"
+            >
+
+            <select id="limitSelect" onchange="loadLocalData()">
+                <option value="20">20 Records</option>
+                <option value="50">50 Records</option>
+                <option value="100" selected>100 Records</option>
+            </select>
+
+        </div>
+
+        <p class="local-info" id="recordCount">
+            Loading records...
+        </p>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Hostname</th>
+                    <th>Source</th>
+                    <th>Event Type</th>
+                    <th>Metric</th>
+                    <th>Value</th>
+                    <th>Severity</th>
+                    <th>Collected At</th>
+                </tr>
+            </thead>
+
+            <tbody id="localTableBody">
+                <tr>
+                    <td colspan="8">Loading telemetry...</td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </section>
+
+</div>
+
+<script>
+let telemetryRecords = [];
+
+async function loadLocalData() {
+
+    const limit = document.getElementById("limitSelect").value;
+    const tbody = document.getElementById("localTableBody");
+
+    tbody.textContent = "Loading records...";
+
+    try {
+
+        const response = await fetch(
+            "/api/telemetry?limit=" + encodeURIComponent(limit)
+        );
+
+        const result = await response.json();
+
+        if (!response.ok || result.success === false) {
+            throw new Error(result.message || "Unable to retrieve records");
+        }
+
+        telemetryRecords = result.telemetry || [];
+
+        document.getElementById("recordCount").textContent =
+            "Total records retrieved: " + telemetryRecords.length;
+
+        displayRecords(telemetryRecords);
+
+    } catch (error) {
+
+        tbody.replaceChildren();
+
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+
+        cell.colSpan = 8;
+        cell.textContent = "Error: " + error.message;
+
+        row.appendChild(cell);
+        tbody.appendChild(row);
+
+        document.getElementById("recordCount").textContent =
+            "Unable to retrieve telemetry.";
+
+    }
+}
+
+function displayRecords(records) {
+
+    const tbody = document.getElementById("localTableBody");
+
+    tbody.replaceChildren();
+
+    if (records.length === 0) {
+
+        const row = document.createElement("tr");
+        const cell = document.createElement("td");
+
+        cell.colSpan = 8;
+        cell.textContent = "No telemetry records found.";
+
+        row.appendChild(cell);
+        tbody.appendChild(row);
+
+        return;
+    }
+
+    records.forEach(record => {
+
+        const row = document.createElement("tr");
+
+        const values = [
+            record.id,
+            record.hostname,
+            record.source,
+            record.event_type,
+            record.metric_name,
+            record.metric_value,
+            record.severity,
+            record.collected_at
+        ];
+
+        values.forEach(value => {
+
+            const cell = document.createElement("td");
+            cell.textContent = value ?? "-";
+
+            row.appendChild(cell);
+
+        });
+
+        tbody.appendChild(row);
+
+    });
+}
+
+function filterData() {
+
+    const search = document
+        .getElementById("searchInput")
+        .value.toLowerCase();
+
+    const filtered = telemetryRecords.filter(record => {
+
+        return [
+            record.hostname,
+            record.source,
+            record.event_type,
+            record.metric_name,
+            record.severity
+        ].some(value =>
+            String(value ?? "").toLowerCase().includes(search)
+        );
+
+    });
+
+    displayRecords(filtered);
+
+    document.getElementById("recordCount").textContent =
+        "Showing " + filtered.length + " of " +
+        telemetryRecords.length + " records.";
+}
+
+loadLocalData();
+</script>
+
+{% endblock %}

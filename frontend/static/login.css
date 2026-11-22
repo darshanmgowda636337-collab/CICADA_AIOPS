@@ -1,0 +1,110 @@
+/* ==========================================
+   CICADA AIOPS - AUTHENTICATION STYLES
+========================================== */
+
+.auth-card {
+    width: 100%;
+    max-width: 450px;
+    margin: 55px auto;
+    padding: 38px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 12px 35px rgba(20, 40, 70, 0.10);
+}
+
+.auth-heading {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.auth-heading h1 {
+    color: #1f3a5f;
+    font-size: 31px;
+    margin-bottom: 10px;
+}
+
+.auth-heading p {
+    color: #64748b;
+    font-size: 14px;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 19px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-field label {
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.form-field input {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    font-size: 14px;
+    background: #ffffff;
+    color: #1e293b;
+}
+
+.form-field input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.auth-form .primary-button {
+    width: 100%;
+    margin-top: 5px;
+}
+
+.auth-switch {
+    text-align: center;
+    margin-top: 20px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.auth-switch a {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+
+.form-errors {
+    margin-bottom: 20px;
+    padding: 12px 15px;
+    border-radius: 8px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    font-size: 13px;
+}
+
+.form-errors p {
+    margin: 5px 0;
+}
+
+@media(max-width: 600px) {
+    .auth-card {
+        margin: 30px auto;
+        padding: 25px 20px;
+    }
+
+    .auth-heading h1 {
+        font-size: 26px;
+    }
+}

@@ -1,0 +1,128 @@
+
+
+{% extends "base.html" %}
+
+{% block title %}Register — CICADA AIOps{% endblock %}
+
+{% block head %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='login.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="auth-card register-card"
+         aria-labelledby="register-title">
+
+    <div class="auth-heading">
+
+        <p class="eyebrow">JOIN CICADA AIOPS</p>
+
+        <h1 id="register-title">Create Account</h1>
+
+        <p>
+            Register to access intelligent IT operations monitoring.
+        </p>
+
+    </div>
+
+    {% if errors %}
+
+    <div class="form-errors" role="alert">
+        {% for error in errors %}
+        <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+
+    {% endif %}
+
+    <form method="POST"
+          action="{{ url_for('register') }}"
+          class="auth-form">
+
+        <div class="form-field">
+
+            <label for="name">Full Name</label>
+
+            <input
+                type="text"
+                id="name"
+                name="name"
+                placeholder="Enter your full name"
+                value="{{ request.form.get('name', '') }}"
+                maxlength="100"
+                autocomplete="name"
+                required
+            >
+
+        </div>
+
+        <div class="form-field">
+
+            <label for="email">Email Address</label>
+
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                value="{{ request.form.get('email', '') }}"
+                maxlength="254"
+                autocomplete="email"
+                required
+            >
+
+        </div>
+
+        <div class="form-field">
+
+            <label for="password">Password</label>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Create a password"
+                minlength="8"
+                autocomplete="new-password"
+                required
+            >
+
+        </div>
+
+        <div class="form-field">
+
+            <label for="confirm_password">
+                Confirm Password
+            </label>
+
+            <input
+                type="password"
+                id="confirm_password"
+                name="confirm_password"
+                placeholder="Confirm your password"
+                minlength="8"
+                autocomplete="new-password"
+                required
+            >
+
+        </div>
+
+        <button type="submit" class="primary-button">
+            Create Account
+        </button>
+
+    </form>
+
+    <p class="auth-switch">
+        Already have an account?
+        <a href="{{ url_for('login') }}">Login</a>
+    </p>
+
+    <p class="auth-switch">
+        <a href="{{ url_for('index') }}">Back to Home</a>
+    </p>
+
+</section>
+
+{% endblock %}

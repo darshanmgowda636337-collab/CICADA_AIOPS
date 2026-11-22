@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="theme-color" content="#1F3A5F">
+
+    <meta name="description"
+          content="CICADA AIOps - Intelligent IT Operations Monitoring Platform">
+
+    <title>
+        {% block title %}CICADA AIOps{% endblock %}
+    </title>
+
+    {% block head %}{% endblock %}
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="site-header">
+
+        <div class="header-inner">
+
+            <a class="brand" href="{{ url_for('index') }}">
+
+                <span class="brand-mark" aria-hidden="true">
+                    CA
+                </span>
+
+                <span>
+                    CICADA <strong>AIOps</strong>
+                </span>
+
+            </a>
+
+            <!-- LOGGED-IN NAVIGATION -->
+            {% if session.get('user_id') %}
+
+            <nav class="main-nav" aria-label="Main navigation">
+
+                <a href="{{ url_for('index') }}"
+                   {% if request.endpoint == 'index' %}
+                   class="active" aria-current="page"
+                   {% endif %}>
+                    Home
+                </a>
+
+                <a href="{{ url_for('dashboard') }}"
+                   {% if request.endpoint == 'dashboard' %}
+                   class="active" aria-current="page"
+                   {% endif %}>
+                    Dashboard
+                </a>
+
+                <a href="{{ url_for('local_data') }}"
+                   {% if request.endpoint == 'local_data' %}
+                   class="active" aria-current="page"
+                   {% endif %}>
+                    Local Data
+                </a>
+
+                <a href="{{ url_for('logout') }}"
+                   {% if request.endpoint == 'logout' %}
+                   class="active" aria-current="page"
+                   {% endif %}>
+                    Logout
+                </a>
+
+            </nav>
+
+            <!-- GUEST NAVIGATION -->
+            {% else %}
+
+            <nav class="main-nav auth-nav"
+                 aria-label="Account navigation">
+
+                <a href="{{ url_for('index') }}"
+                   {% if request.endpoint == 'index' %}
+                   class="active" aria-current="page"
+                   {% endif %}>
+                    Home
+                </a>
+
+                <a href="{{ url_for('login') }}"
+                   {% if request.endpoint == 'login' %}
+                   class="active" aria-current="page"
+                   {% endif %}>
+                    Login
+                </a>
+
+                <a href="{{ url_for('register') }}"
+                   {% if request.endpoint == 'register' %}
+                   class="active" aria-current="page"
+                   {% endif %}>
+                    Register
+                </a>
+
+            </nav>
+
+            {% endif %}
+
+        </div>
+
+    </header>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="page-main">
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+            <div class="flash-stack" role="status">
+
+                {% for category, message in messages %}
+
+                <p class="flash-message {{ category }}">
+                    {{ message }}
+                </p>
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="privacy-footer">
+
+        <span class="privacy-mark" aria-hidden="true">
+            ◈
+        </span>
+
+        <span>
+            CICADA AIOps | Intelligent IT Operations Monitoring
+        </span>
+
+    </footer>
+
+</body>
+</html>

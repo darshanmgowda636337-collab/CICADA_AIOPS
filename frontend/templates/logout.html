@@ -1,0 +1,80 @@
+
+{% extends "base.html" %}
+
+{% block title %}Logout | CICADA AIOps{% endblock %}
+
+{% block content %}
+
+<style>
+.logout-container {
+    max-width: 500px;
+    margin: 90px auto;
+    padding: 40px 25px;
+    text-align: center;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.06);
+}
+.logout-icon {
+    width: 65px;
+    height: 65px;
+    margin: auto auto 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #dbeafe;
+    color: #1f3a5f;
+    border-radius: 50%;
+    font-size: 28px;
+}
+.logout-container h1 {
+    color: #1e293b;
+    margin-bottom: 12px;
+}
+.logout-container p {
+    color: #64748b;
+    line-height: 1.7;
+}
+.logout-actions {
+    margin-top: 25px;
+}
+.logout-button {
+    display: inline-block;
+    padding: 12px 24px;
+    background: #1f3a5f;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+}
+.logout-button:hover {
+    background: #2563eb;
+}
+</style>
+
+<section class="logout-container">
+
+    <div class="logout-icon">✓</div>
+
+    <p class="eyebrow">CICADA AIOPS</p>
+
+    <h1>Successfully Logged Out</h1>
+
+    <p>
+        Your session has ended.
+        Thank you for using CICADA AIOps Intelligent
+        IT Operations Monitoring Platform.
+    </p>
+
+    <div class="logout-actions">
+
+        <a href="{{ url_for('login') }}" class="logout-button">
+            Login Again
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

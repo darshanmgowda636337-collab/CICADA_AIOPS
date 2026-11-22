@@ -1,0 +1,150 @@
+/* ==========================================
+   CICADA AIOPS - DASHBOARD STYLES
+========================================== */
+
+.dashboard-container,
+.local-container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 30px 20px;
+}
+
+.dashboard-header,
+.local-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.dashboard-header h1,
+.local-header h1 {
+    color: #1f3a5f;
+    font-size: 28px;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.stat-card,
+.panel,
+.local-panel {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 22px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+.stat-card h3 {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.stat-card strong {
+    color: #1f3a5f;
+    font-size: 30px;
+}
+
+.panel {
+    margin-bottom: 22px;
+}
+
+.panel h2 {
+    color: #1f3a5f;
+    font-size: 19px;
+    margin-bottom: 18px;
+}
+
+.dashboard-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.panel table,
+.local-panel table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.panel th,
+.panel td,
+.local-panel th,
+.local-panel td {
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    text-align: left;
+    font-size: 13px;
+}
+
+.panel th,
+.local-panel th {
+    color: #64748b;
+}
+
+.status-good {
+    color: #15803d;
+    font-weight: bold;
+}
+
+.status-warning {
+    color: #b45309;
+    font-weight: bold;
+}
+
+.status-danger {
+    color: #dc2626;
+    font-weight: bold;
+}
+
+.refresh-button {
+    padding: 10px 18px;
+    background: #1f3a5f;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.local-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.local-controls input,
+.local-controls select {
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+}
+
+@media(max-width: 850px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dashboard-columns {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media(max-width: 550px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .panel,
+    .local-panel {
+        overflow-x: auto;
+    }
+}

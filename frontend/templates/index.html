@@ -1,0 +1,149 @@
+
+{% extends "base.html" %}
+
+{% block title %}Home | CICADA AIOps{% endblock %}
+
+{% block content %}
+
+<section class="hero-section">
+
+    <div class="hero-content">
+
+        <p class="eyebrow">INTELLIGENT IT OPERATIONS</p>
+
+        <h1>
+            Monitor Smarter.<br>
+            Detect Faster.<br>
+            Operate Better.
+        </h1>
+
+        <p class="hero-description">
+            CICADA AIOps is an intelligent IT operations monitoring
+            platform that combines telemetry, AI-driven insights,
+            incident management and security monitoring in one place.
+        </p>
+
+        <div class="hero-actions">
+
+            <a href="{{ url_for('login') }}" class="primary-button">
+                Get Started
+            </a>
+
+            <a href="{{ url_for('register') }}" class="secondary-button">
+                Create Account
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="hero-visual">
+
+        <div class="monitor-card">
+
+            <div class="monitor-header">
+                <span class="status-dot"></span>
+                System Monitoring
+                <span class="live-label">LIVE</span>
+            </div>
+
+            <div class="monitor-stat">
+                <span>AI Operations</span>
+                <strong>ACTIVE</strong>
+            </div>
+
+            <div class="monitor-stat">
+                <span>Telemetry Collection</span>
+                <strong>ENABLED</strong>
+            </div>
+
+            <div class="monitor-stat">
+                <span>Security Monitoring</span>
+                <strong>ACTIVE</strong>
+            </div>
+
+            <div class="monitor-stat">
+                <span>Incident Detection</span>
+                <strong>READY</strong>
+            </div>
+
+            <div class="monitor-footer">
+                CICADA AIOps Monitoring Platform
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="features-section">
+
+    <div class="section-heading">
+        <p class="eyebrow">PLATFORM CAPABILITIES</p>
+        <h2>Everything in One Monitoring Platform</h2>
+        <p>
+            Monitor infrastructure, identify anomalies and
+            make informed operational decisions.
+        </p>
+    </div>
+
+    <div class="feature-grid">
+
+        <article class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Telemetry Monitoring</h3>
+            <p>
+                Collect and monitor system metrics and operational
+                events from connected sources.
+            </p>
+        </article>
+
+        <article class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <h3>AI Recommendations</h3>
+            <p>
+                Generate intelligent operational recommendations
+                using AI-driven analysis.
+            </p>
+        </article>
+
+        <article class="feature-card">
+            <div class="feature-icon">🚨</div>
+            <h3>Alert Management</h3>
+            <p>
+                Identify important system events and monitor
+                operational alerts.
+            </p>
+        </article>
+
+        <article class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3>Security Monitoring</h3>
+            <p>
+                Monitor security-related events and identify
+                suspicious activity.
+            </p>
+        </article>
+
+    </div>
+
+</section>
+
+
+<section class="cta-section">
+
+    <h2>Take Control of Your IT Operations</h2>
+
+    <p>
+        Start monitoring your infrastructure with CICADA AIOps.
+    </p>
+
+    <a href="{{ url_for('login') }}" class="primary-button">
+        Access Dashboard
+    </a>
+
+</section>
+
+{% endblock %}

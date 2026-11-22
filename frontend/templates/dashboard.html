@@ -1,0 +1,403 @@
+
+{% extends "base.html" %}
+
+{% block title %}Dashboard | CICADA AIOps{% endblock %}
+
+{% block content %}
+
+<style>
+.dashboard-container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 30px 20px;
+    color: #1e293b;
+}
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+.dashboard-header h1 { margin: 0; font-size: 28px; }
+.dashboard-header p { color: #64748b; }
+.live-badge {
+    background: #dcfce7;
+    color: #166534;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+}
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 25px;
+}
+.stat-card, .panel {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 22px;
+    box-shadow: 0 4px 12px rgba(0,0,0,.04);
+}
+.stat-card h3 {
+    color: #64748b;
+    font-size: 14px;
+    margin: 0 0 12px;
+}
+.stat-card strong { font-size: 30px; }
+.panel { margin-bottom: 22px; }
+.panel h2 { font-size: 19px; margin-top: 0; }
+.panel table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+.panel th, .panel td {
+    padding: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 13px;
+}
+.panel th { color: #64748b; }
+.status-good { color: #15803d; font-weight: bold; }
+.status-warning { color: #b45309; font-weight: bold; }
+.status-danger { color: #dc2626; font-weight: bold; }
+.dashboard-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+.data-message { color: #64748b; padding: 15px 0; }
+.refresh-button {
+    border: 0;
+    background: #1f3a5f;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+@media(max-width: 850px) {
+    .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+    .dashboard-columns { grid-template-columns: 1fr; }
+}
+@media(max-width: 500px) {
+    .dashboard-grid { grid-template-columns: 1fr; }
+    .panel { overflow-x: auto; }
+}
+</style>
+
+<div class="dashboard-container">
+
+    <header class="dashboard-header">
+        <div>
+            <p class="eyebrow">CICADA AIOPS / OVERVIEW</p>
+            <h1>Operations Dashboard</h1>
+            <p>Monitor infrastructure, telemetry, incidents and security.</p>
+        </div>
+
+        <div>
+            <span class="live-badge">● MONITORING</span>
+            <button class="refresh-button" onclick="loadDashboard()">
+                Refresh Data
+            </button>
+        </div>
+    </header>
+
+    <!-- SUMMARY CARDS -->
+
+    <section class="dashboard-grid">
+
+        <article class="stat-card">
+            <h3>Total Telemetry</h3>
+            <strong id="totalTelemetry">--</strong>
+        </article>
+
+        <article class="stat-card">
+            <h3>Total Alerts</h3>
+            <strong id="totalAlerts">--</strong>
+        </article>
+
+        <article class="stat-card">
+            <h3>Total Incidents</h3>
+            <strong id="totalIncidents">--</strong>
+        </article>
+
+        <article class="stat-card">
+            <h3>Open Incidents</h3>
+            <strong id="openIncidents">--</strong>
+        </article>
+
+    </section>
+
+    <!-- SYSTEM STATUS -->
+
+    <section class="panel">
+        <h2>System Overview</h2>
+        <p id="systemStatus" class="data-message">
+            Checking system status...
+        </p>
+    </section>
+
+    <!-- TELEMETRY AND ALERTS -->
+
+    <div class="dashboard-columns">
+
+        <section class="panel">
+            <h2>Recent Telemetry</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Hostname</th>
+                        <th>Metric</th>
+                        <th>Value</th>
+                        <th>Severity</th>
+                    </tr>
+                </thead>
+
+                <tbody id="telemetryTable">
+                    <tr>
+                        <td colspan="4">Loading telemetry...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="panel">
+            <h2>Recent Alerts</h2>
+
+            <div id="alertsList" class="data-message">
+                Loading alerts...
+            </div>
+        </section>
+
+    </div>
+
+    <!-- INCIDENTS -->
+
+    <section class="panel">
+        <h2>Incident Management</h2>
+
+        <div id="incidentsList" class="data-message">
+            Loading incidents...
+        </div>
+    </section>
+
+    <!-- AI RECOMMENDATIONS -->
+
+    <section class="panel">
+        <h2>AI Recommendations</h2>
+
+        <div id="recommendationsList" class="data-message">
+            Loading AI recommendations...
+        </div>
+    </section>
+
+    <!-- SECURITY -->
+
+    <section class="panel">
+        <h2>Security Monitoring</h2>
+
+        <div id="securityList" class="data-message">
+            Loading security events...
+        </div>
+    </section>
+
+</div>
+
+<script>
+async function fetchAPI(url) {
+    const response = await fetch(url);
+    const result = await response.json();
+
+    if (!response.ok || result.success === false) {
+        throw new Error(result.message || "API request failed");
+    }
+
+    return result;
+}
+
+function setText(id, value) {
+    document.getElementById(id).textContent = value ?? 0;
+}
+
+function displayMessage(id, message) {
+    document.getElementById(id).textContent = message;
+}
+
+function createCell(value) {
+    const cell = document.createElement("td");
+    cell.textContent = value ?? "-";
+    return cell;
+}
+
+async function loadDashboard() {
+
+    displayMessage("systemStatus", "Checking backend and database...");
+
+    try {
+        const health = await fetchAPI("/api/health");
+
+        displayMessage(
+            "systemStatus",
+            "Backend: " + health.backend +
+            " | Database: " + health.database
+        );
+    } catch (error) {
+        displayMessage("systemStatus", "Health check failed: " + error.message);
+    }
+
+    try {
+        const result = await fetchAPI("/api/dashboard");
+        const stats = result.dashboard || {};
+
+        setText("totalTelemetry", stats.total_telemetry);
+        setText("totalAlerts", stats.total_alerts);
+        setText("totalIncidents", stats.total_incidents);
+        setText("openIncidents", stats.open_incidents);
+
+    } catch (error) {
+        displayMessage("systemStatus", "Dashboard API: " + error.message);
+    }
+
+    // TELEMETRY
+
+    try {
+        const result = await fetchAPI("/api/telemetry?limit=10");
+        const tbody = document.getElementById("telemetryTable");
+
+        tbody.replaceChildren();
+
+        if (!result.telemetry || result.telemetry.length === 0) {
+            displayMessage("telemetryTable", "No telemetry records available.");
+        } else {
+            result.telemetry.forEach(item => {
+                const row = document.createElement("tr");
+
+                row.appendChild(createCell(item.hostname));
+                row.appendChild(createCell(item.metric_name));
+                row.appendChild(createCell(item.metric_value));
+                row.appendChild(createCell(item.severity));
+
+                tbody.appendChild(row);
+            });
+        }
+    } catch (error) {
+        displayMessage("telemetryTable", "Unable to load telemetry.");
+    }
+
+    // ALERTS
+
+    try {
+        const result = await fetchAPI("/api/alerts");
+        const container = document.getElementById("alertsList");
+
+        container.replaceChildren();
+
+        if (!result.alerts || result.alerts.length === 0) {
+            container.textContent = "No alerts available.";
+        } else {
+            result.alerts.forEach(alert => {
+                const item = document.createElement("p");
+                item.textContent =
+                    (alert.severity || "INFO") + " — " +
+                    (alert.message || alert.description || "Alert detected");
+
+                container.appendChild(item);
+            });
+        }
+    } catch (error) {
+        displayMessage("alertsList", "Unable to load alerts.");
+    }
+
+    // INCIDENTS
+
+    try {
+        const result = await fetchAPI("/api/incidents");
+        const container = document.getElementById("incidentsList");
+
+        container.replaceChildren();
+
+        if (!result.incidents || result.incidents.length === 0) {
+            container.textContent = "No incidents available.";
+        } else {
+            result.incidents.forEach(incident => {
+                const item = document.createElement("p");
+                item.textContent =
+                    (incident.title || incident.description || "Incident") +
+                    " | Severity: " + (incident.severity || "Unknown") +
+                    " | Status: " + (incident.status || "Unknown");
+
+                container.appendChild(item);
+            });
+        }
+    } catch (error) {
+        displayMessage("incidentsList", "Unable to load incidents.");
+    }
+
+    // AI RECOMMENDATIONS
+
+    try {
+        const result = await fetchAPI("/api/recommendations");
+        const container = document.getElementById("recommendationsList");
+
+        container.replaceChildren();
+
+        const recommendations = result.recommendations;
+
+        if (!recommendations || recommendations.length === 0) {
+            container.textContent = "No AI recommendations available.";
+        } else {
+            const items = Array.isArray(recommendations)
+                ? recommendations
+                : [recommendations];
+
+            items.forEach(recommendation => {
+                const item = document.createElement("p");
+
+                item.textContent =
+                    typeof recommendation === "string"
+                        ? recommendation
+                        : JSON.stringify(recommendation);
+
+                container.appendChild(item);
+            });
+        }
+    } catch (error) {
+        displayMessage("recommendationsList", "AI recommendations unavailable.");
+    }
+
+    // SECURITY EVENTS
+
+    try {
+        const result = await fetchAPI("/api/security-events");
+        const container = document.getElementById("securityList");
+
+        container.replaceChildren();
+
+        if (!result.security_events || result.security_events.length === 0) {
+            container.textContent = "No security events available.";
+        } else {
+            result.security_events.forEach(event => {
+                const item = document.createElement("p");
+                item.textContent =
+                    (event.event_type || "Security event") +
+                    " | " + (event.hostname || "Unknown host") +
+                    " | " + (event.severity || "Unknown");
+
+                container.appendChild(item);
+            });
+        }
+    } catch (error) {
+        displayMessage("securityList", "Security events unavailable.");
+    }
+}
+
+loadDashboard();
+setInterval(loadDashboard, 15000);
+</script>
+
+{% endblock %}
